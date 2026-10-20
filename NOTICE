@@ -1,0 +1,33 @@
+Tap Party
+Copyright (c) 2026 2three1y
+
+This product includes software from these starred GitHub repos. Their full
+licence texts are in the licenses/ folder.
+
+- morse-learn (https://github.com/googlecreativelab/morse-learn)
+  Copyright 2018 Google Inc.
+  Licensed under the Apache License, Version 2.0 (licenses/morse-learn.txt).
+  Modified for Tap Party: see the note at the top of
+  vendor/morse-learn/morse-learn-data.mjs. The morse-learn repo has no NOTICE
+  file of its own.
+
+- trystero (https://github.com/dmotz/trystero)
+  Copyright (c) 2021 Dan Motzenbecker. MIT License (licenses/trystero.txt).
+
+- web-haptics (https://github.com/lochie/web-haptics)
+  Copyright (c) 2025 Lochie Axon. MIT License (licenses/web-haptics.txt).
+
+- braille (https://github.com/Nonemoticoner/braille)
+  Copyright (c) 2015 Nonemoticoner. MIT License (licenses/braille.txt).
+  Modified: CommonJS export changed to an ES module export.
+
+- tabbable (https://github.com/focus-trap/tabbable)
+  Copyright (c) 2015 David Clark. MIT License (licenses/tabbable.txt).
+
+- a11y-dialog (https://github.com/KittyGiraudel/a11y-dialog)
+  Copyright (c) 2025 Kitty Giraudel. MIT License (licenses/a11y-dialog.txt).
+  Modified: the bundled focusable-selectors code was replaced with tabbable.
+
+- dart-bip340 (https://github.com/nbd-wtf/dart-bip340)
+  Copyright 2021 fiatjaf. MIT License (licenses/dart-bip340.txt).
+  Ported from Dart to JavaScript in vendor/bip340-schnorr/bip340-schnorr.mjs.

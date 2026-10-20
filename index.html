@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tap Party</title>
+<meta name="description" content="Morse code chat with friends, right in the browser. Tap, hear, feel, and read it in braille.">
+<meta name="theme-color" content="#14213d">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "@trystero-p2p/core": "./vendor/trystero/core/index.mjs",
+    "@noble/secp256k1": "./vendor/bip340-schnorr/bip340-schnorr.mjs"
+  }
+}
+</script>
+<script type="module" src="app/main.js"></script>
+</head>
+<body>
+<div id="app">
+<header class="top">
+  <nav aria-label="Main">
+    <ul class="nav">
+      <li><a href="#/">Home</a></li>
+      <li id="nav-room-item" hidden><a id="nav-room" href="#/">Room</a></li>
+      <li><a href="#/learn">Learn</a></li>
+      <li><a href="#/braille">Braille</a></li>
+      <li><a href="#/credits">Credits</a></li>
+    </ul>
+  </nav>
+  <button type="button" class="btn small" data-a11y-dialog-show="settings-dialog">Settings</button>
+</header>
+
+<main id="main">
+
+<section id="view-home" class="view">
+  <h1 tabindex="-1">Tap Party</h1>
+  <p>Morse code chat with your friends. Open a room, share the link, and tap a big pad. A short tap is a dot, a long press is a dash. Friends hear your taps as tones, feel them as buzzes, and get the words read out.</p>
+  <p>No accounts and no server. Your browsers talk to each other directly.</p>
+  <button type="button" class="btn big" id="new-room">Start a new room</button>
+  <h2>Join a friend's room</h2>
+  <form id="join-form" class="join">
+    <label for="join-code">Room code or room link</label>
+    <input id="join-code" name="code" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url">
+    <button type="submit" class="btn">Join room</button>
+  </form>
+  <p id="join-error" class="error" hidden></p>
+  <h2>New to Morse?</h2>
+  <p><a href="#/learn">Learn the letters first</a>. It starts with E, which is one dot.</p>
+</section>
+
+<section id="view-room" class="view" hidden>
+  <h1 tabindex="-1" id="room-title">Room</h1>
+  <p id="room-status">Connecting…</p>
+
+  <h2>Invite friends</h2>
+  <p>Room link: <a id="room-link" href="#/">link</a></p>
+  <div class="row">
+    <button type="button" class="btn" id="copy-link">Copy room link</button>
+    <button type="button" class="btn" id="share-link" hidden>Share room link</button>
+  </div>
+
+  <h2>Tap pad</h2>
+  <p class="hint">Short tap for a dot, hold for a dash. With VoiceOver or TalkBack: double-tap for a dot, double-tap and hold for a dash. With a keyboard: focus the pad and press Space or Enter, short or long. A pause ends the letter.</p>
+  <button type="button" class="pad" id="room-pad">Tap pad</button>
+  <div class="row keys">
+    <button type="button" class="btn" id="room-dot">Dot</button>
+    <button type="button" class="btn" id="room-dash">Dash</button>
+    <button type="button" class="btn" id="room-end">End letter</button>
+    <button type="button" class="btn" id="room-space">Space</button>
+    <button type="button" class="btn" id="room-delete">Delete letter</button>
+  </div>
+
+  <h2>Your message</h2>
+  <p>Letter so far: <span id="room-current">none</span></p>
+  <p>Message: <span id="room-draft">empty</span></p>
+  <div class="row">
+    <button type="button" class="btn primary" id="room-send">Send message</button>
+    <button type="button" class="btn" id="room-clear">Clear message</button>
+  </div>
+
+  <h2>Messages</h2>
+  <p id="log-empty">No messages yet.</p>
+  <ol id="log" class="log"></ol>
+
+  <h2>Done for now?</h2>
+  <button type="button" class="btn" data-a11y-dialog-show="leave-dialog">Leave room</button>
+</section>
+
+<section id="view-learn" class="view" hidden>
+  <h1 tabindex="-1">Learn Morse</h1>
+  <p>Letters come in the order Google's Morse trainer uses, starting with the easiest: E, T, A, I, M, S. Get a letter right twice and a new one unlocks. After a few letters you practice short words.</p>
+  <h2>Now</h2>
+  <p id="learn-prompt">Loading…</p>
+  <p id="learn-progress"></p>
+  <div class="row">
+    <button type="button" class="btn" id="learn-hear">Hear it</button>
+    <button type="button" class="btn" id="learn-skip">Skip</button>
+  </div>
+  <h2>Your turn</h2>
+  <button type="button" class="pad small-pad" id="learn-pad">Practice pad</button>
+  <div class="row keys">
+    <button type="button" class="btn" id="learn-dot">Dot</button>
+    <button type="button" class="btn" id="learn-dash">Dash</button>
+    <button type="button" class="btn" id="learn-end">End letter</button>
+  </div>
+  <p>Letter so far: <span id="learn-current">none</span></p>
+  <h2>All letters</h2>
+  <p>Press a letter to hear it.</p>
+  <ul id="learn-letters" class="letters"></ul>
+  <h2>Hear any words</h2>
+  <form id="learn-play-form" class="join">
+    <label for="learn-play-text">Words to play as Morse</label>
+    <input id="learn-play-text" type="text" autocomplete="off">
+    <button type="submit" class="btn">Play</button>
+  </form>
+  <h2>Start over</h2>
+  <button type="button" class="btn" id="learn-reset">Reset my progress</button>
+</section>
+
+<section id="view-braille" class="view" hidden>
+  <h1 tabindex="-1">Braille view</h1>
+  <p>Decoded messages as Unicode braille: uncontracted letters, numbers with the number sign, and basic punctuation. A braille display shows them as cells.</p>
+  <h2>Your message</h2>
+  <p id="braille-draft" class="braille" lang="en-Brai">⠀</p>
+  <h2>Messages</h2>
+  <p id="braille-empty">No messages yet.</p>
+  <ol id="braille-log" class="log"></ol>
+  <div class="row">
+    <input type="checkbox" id="braille-print" checked>
+    <label for="braille-print">Also show print letters</label>
+  </div>
+</section>
+
+<section id="view-credits" class="view" hidden>
+  <h1 tabindex="-1">Credits</h1>
+<!-- CREDITS:START -->
+<p>Every library in Tap Party comes from a repo that <a href="https://github.com/2three1y">2three1y</a> has starred on GitHub. 7 starred repos went in.</p>
+<h2>Starred repos used</h2>
+<ul class="credits-list">
+<li>
+<h3>trystero</h3>
+<ul>
+<li>Repo: <a href="https://github.com/dmotz/trystero">dmotz/trystero</a></li>
+<li>Author: Dan Motzenbecker</li>
+<li>License: MIT, <a href="licenses/trystero.txt">full MIT text for trystero</a></li>
+<li>Used for: Rooms with no server. Browsers find each other through public Nostr relays, then send taps and messages straight to each other over WebRTC.</li>
+<li>Changes: None to the code. Source map comments were removed because the maps are not included.</li>
+<li>Notice: Copyright (c) 2021 Dan Motzenbecker. MIT License.</li>
+</ul>
+</li>
+<li>
+<h3>morse-learn</h3>
+<ul>
+<li>Repo: <a href="https://github.com/googlecreativelab/morse-learn">googlecreativelab/morse-learn</a></li>
+<li>Author: Google Inc. (made by Tania Finlayson and Use All Five with Google Creative Lab)</li>
+<li>License: Apache-2.0, <a href="licenses/morse-learn.txt">full Apache-2.0 text for morse-learn</a></li>
+<li>Used for: Learn mode: the Morse letter table, the order letters are taught in (E, T, A, I, M, S…), the rule that a letter counts as learned after 2 right answers, and the practice word list.</li>
+<li>Changes: Pieces of scripts/morse-dictionary.js, scripts/words.js, scripts/game-state.js and scripts/config.js were combined into one ES module. The reverse lookup table is now built from englishToMorse, because the original had a typo for the letter V. The file says so at the top.</li>
+<li>Notice: Copyright 2018 Google Inc. Licensed under the Apache License, Version 2.0. This is not an officially supported Google product. The morse-learn repo has no NOTICE file; its copyright notice and licence are kept in the file and in licenses/morse-learn.txt.</li>
+</ul>
+</li>
+<li>
+<h3>web-haptics</h3>
+<ul>
+<li>Repo: <a href="https://github.com/lochie/web-haptics">lochie/web-haptics</a></li>
+<li>Author: Lochie Axon</li>
+<li>License: MIT, <a href="licenses/web-haptics.txt">full MIT text for web-haptics</a></li>
+<li>Used for: Haptics. On Android it uses navigator.vibrate. On iPhone, which has no navigator.vibrate, it clicks a hidden iOS switch control so the Taptic Engine ticks.</li>
+<li>Changes: None.</li>
+<li>Notice: Copyright (c) 2025 Lochie Axon. MIT License.</li>
+</ul>
+</li>
+<li>
+<h3>braille</h3>
+<ul>
+<li>Repo: <a href="https://github.com/Nonemoticoner/braille">Nonemoticoner/braille</a></li>
+<li>Author: Nonemoticoner</li>
+<li>License: MIT, <a href="licenses/braille.txt">full MIT text for braille</a></li>
+<li>Used for: Braille view: turns decoded text into Unicode braille cells.</li>
+<li>Changes: module.exports was changed to an ES module export. app/braille-text.js adds the number sign and the Unified English Braille punctuation cells before calling it.</li>
+<li>Notice: Copyright (c) 2015 Nonemoticoner. MIT License.</li>
+</ul>
+</li>
+<li>
+<h3>tabbable</h3>
+<ul>
+<li>Repo: <a href="https://github.com/focus-trap/tabbable">focus-trap/tabbable</a></li>
+<li>Author: David Clark and the focus-trap contributors</li>
+<li>License: MIT, <a href="licenses/tabbable.txt">full MIT text for tabbable</a></li>
+<li>Used for: Finds the buttons and fields inside a dialog, so Tab and Shift+Tab stay inside it.</li>
+<li>Changes: None to the code. The source map comment was removed.</li>
+<li>Notice: Copyright (c) 2015 David Clark. MIT License.</li>
+</ul>
+</li>
+<li>
+<h3>a11y-dialog</h3>
+<ul>
+<li>Repo: <a href="https://github.com/KittyGiraudel/a11y-dialog">KittyGiraudel/a11y-dialog</a></li>
+<li>Author: Kitty Giraudel</li>
+<li>License: MIT, <a href="licenses/a11y-dialog.txt">full MIT text for a11y-dialog</a></li>
+<li>Used for: The Settings dialog and the Leave room dialog: focus moves in and back out, Escape closes, and the rest of the page is hidden from screen readers while it is open.</li>
+<li>Changes: The published build bundles a package called focusable-selectors, which is not starred. That part was removed and the focus trap now uses tabbable instead. The file says so at the top.</li>
+<li>Notice: Copyright (c) 2025 Kitty Giraudel. MIT License.</li>
+</ul>
+</li>
+<li>
+<h3>dart-bip340</h3>
+<ul>
+<li>Repo: <a href="https://github.com/nbd-wtf/dart-bip340">nbd-wtf/dart-bip340</a></li>
+<li>Author: fiatjaf</li>
+<li>License: MIT, <a href="licenses/dart-bip340.txt">full MIT text for dart-bip340</a></li>
+<li>Used for: Nostr relays only accept signed events. trystero normally signs them with @noble/secp256k1, which is not starred, so Tap Party signs with a JavaScript port of this repo's BIP-340 Schnorr code instead.</li>
+<li>Changes: Ported from Dart to JavaScript. The curve maths that the Dart code takes from pointycastle is written from scratch. It passes the official BIP-340 signing test vectors.</li>
+<li>Notice: Copyright 2021 fiatjaf. MIT License.</li>
+</ul>
+</li>
+</ul>
+<h2>Looked at, not used</h2>
+<ul>
+<li>hainguyents13/mechvibes: Its sound packs come from many people and none of them states its own licence, so they are not safe to reuse. Every tone and earcon in Tap Party is made with WebAudio oscillators instead, with no sound files at all.</li>
+<li>paulmillr/noble-secp256k1: trystero's Nostr strategy depends on it, but it is not starred, so it is replaced by the dart-bip340 port above.</li>
+<li>KittyGiraudel/focusable-selectors: Bundled inside a11y-dialog's published build, but not starred, so it was swapped for tabbable.</li>
+</ul>
+<h2>Used only for testing</h2>
+<ul>
+<li><a href="https://github.com/dequelabs/axe-core">dequelabs/axe-core</a> (MPL-2.0): Ran an automated accessibility check during testing. It is not part of the site.</li>
+</ul>
+<h2>Tap Party itself</h2>
+<p>Tap Party is MIT licensed. <a href="LICENSE">Tap Party licence</a>, <a href="NOTICE">NOTICE file</a>, <a href="https://github.com/2three1y/tap-party">source code on GitHub</a>.</p>
+<!-- CREDITS:END -->
+</section>
+
+</main>
+
+</div>
+
+<div id="settings-dialog" class="dialog" aria-labelledby="settings-title" aria-hidden="true">
+  <div class="dialog-overlay" data-a11y-dialog-hide></div>
+  <div class="dialog-content" role="document">
+    <h2 id="settings-title" tabindex="-1" autofocus>Settings</h2>
+    <div class="field">
+      <label for="set-name">Your name, shown to friends</label>
+      <input id="set-name" type="text" maxlength="24" autocomplete="nickname">
+    </div>
+    <fieldset>
+      <legend>Speed</legend>
+      <div><input type="radio" name="speed" id="speed-slow" value="slow"><label for="speed-slow">Slow</label></div>
+      <div><input type="radio" name="speed" id="speed-normal" value="normal"><label for="speed-normal">Normal</label></div>
+      <div><input type="radio" name="speed" id="speed-fast" value="fast"><label for="speed-fast">Fast</label></div>
+    </fieldset>
+    <fieldset>
+      <legend>While tapping</legend>
+      <div><input type="checkbox" id="set-auto"><label for="set-auto">End letters by pausing</label></div>
+      <div><input type="checkbox" id="set-say-letters"><label for="set-say-letters">Say each letter</label></div>
+      <div><input type="checkbox" id="set-say-symbols"><label for="set-say-symbols">Say each dot and dash</label></div>
+    </fieldset>
+    <fieldset>
+      <legend>Sound and touch</legend>
+      <div><input type="checkbox" id="set-tones"><label for="set-tones">Tones</label></div>
+      <div><input type="checkbox" id="set-earcons"><label for="set-earcons">Earcons</label></div>
+      <div><input type="checkbox" id="set-haptics"><label for="set-haptics">Haptics</label></div>
+      <div><input type="checkbox" id="set-live"><label for="set-live">Hear friends tapping live</label></div>
+      <div><input type="checkbox" id="set-autoplay"><label for="set-autoplay">Play each new message as Morse</label></div>
+    </fieldset>
+    <button type="button" class="btn primary" data-a11y-dialog-hide>Done</button>
+  </div>
+</div>
+
+<div id="leave-dialog" class="dialog" aria-labelledby="leave-title" aria-hidden="true">
+  <div class="dialog-overlay" data-a11y-dialog-hide></div>
+  <div class="dialog-content" role="document">
+    <h2 id="leave-title" tabindex="-1" autofocus>Leave this room?</h2>
+    <p>You can come back with the same room link.</p>
+    <div class="row">
+      <button type="button" class="btn primary" id="leave-confirm">Leave room</button>
+      <button type="button" class="btn" data-a11y-dialog-hide>Stay</button>
+    </div>
+  </div>
+</div>
+<div id="announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

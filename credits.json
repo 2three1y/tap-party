@@ -1,0 +1,126 @@
+{
+  "project": "Tap Party",
+  "rule": "Every library and asset in Tap Party comes from a repo that 2three1y has starred on GitHub. tools/check-starred.mjs checks this list against starred.txt.",
+  "credits": [
+    {
+      "name": "trystero",
+      "repo": "dmotz/trystero",
+      "link": "https://github.com/dmotz/trystero",
+      "author": "Dan Motzenbecker",
+      "license": "MIT",
+      "license_file": "licenses/trystero.txt",
+      "used_for": "Rooms with no server. Browsers find each other through public Nostr relays, then send taps and messages straight to each other over WebRTC.",
+      "files": [
+        "vendor/trystero/core/ (npm @trystero-p2p/core 0.26.0)",
+        "vendor/trystero/nostr/index.mjs (npm @trystero-p2p/nostr 0.26.0)"
+      ],
+      "changes": "None to the code. Source map comments were removed because the maps are not included.",
+      "notice": "Copyright (c) 2021 Dan Motzenbecker. MIT License."
+    },
+    {
+      "name": "morse-learn",
+      "repo": "googlecreativelab/morse-learn",
+      "link": "https://github.com/googlecreativelab/morse-learn",
+      "author": "Google Inc. (made by Tania Finlayson and Use All Five with Google Creative Lab)",
+      "license": "Apache-2.0",
+      "license_file": "licenses/morse-learn.txt",
+      "used_for": "Learn mode: the Morse letter table, the order letters are taught in (E, T, A, I, M, S…), the rule that a letter counts as learned after 2 right answers, and the practice word list.",
+      "files": [
+        "vendor/morse-learn/morse-learn-data.mjs"
+      ],
+      "changes": "Pieces of scripts/morse-dictionary.js, scripts/words.js, scripts/game-state.js and scripts/config.js were combined into one ES module. The reverse lookup table is now built from englishToMorse, because the original had a typo for the letter V. The file says so at the top.",
+      "notice": "Copyright 2018 Google Inc. Licensed under the Apache License, Version 2.0. This is not an officially supported Google product. The morse-learn repo has no NOTICE file; its copyright notice and licence are kept in the file and in licenses/morse-learn.txt."
+    },
+    {
+      "name": "web-haptics",
+      "repo": "lochie/web-haptics",
+      "link": "https://github.com/lochie/web-haptics",
+      "author": "Lochie Axon",
+      "license": "MIT",
+      "license_file": "licenses/web-haptics.txt",
+      "used_for": "Haptics. On Android it uses navigator.vibrate. On iPhone, which has no navigator.vibrate, it clicks a hidden iOS switch control so the Taptic Engine ticks.",
+      "files": [
+        "vendor/web-haptics/index.mjs and chunk-4NSAIXAB.mjs (npm web-haptics 0.0.6)"
+      ],
+      "changes": "None.",
+      "notice": "Copyright (c) 2025 Lochie Axon. MIT License."
+    },
+    {
+      "name": "braille",
+      "repo": "Nonemoticoner/braille",
+      "link": "https://github.com/Nonemoticoner/braille",
+      "author": "Nonemoticoner",
+      "license": "MIT",
+      "license_file": "licenses/braille.txt",
+      "used_for": "Braille view: turns decoded text into Unicode braille cells.",
+      "files": [
+        "vendor/braille/braille.mjs (npm braille 1.1.0)"
+      ],
+      "changes": "module.exports was changed to an ES module export. app/braille-text.js adds the number sign and the Unified English Braille punctuation cells before calling it.",
+      "notice": "Copyright (c) 2015 Nonemoticoner. MIT License."
+    },
+    {
+      "name": "tabbable",
+      "repo": "focus-trap/tabbable",
+      "link": "https://github.com/focus-trap/tabbable",
+      "author": "David Clark and the focus-trap contributors",
+      "license": "MIT",
+      "license_file": "licenses/tabbable.txt",
+      "used_for": "Finds the buttons and fields inside a dialog, so Tab and Shift+Tab stay inside it.",
+      "files": [
+        "vendor/tabbable/index.esm.js (npm tabbable 6.5.0)"
+      ],
+      "changes": "None to the code. The source map comment was removed.",
+      "notice": "Copyright (c) 2015 David Clark. MIT License."
+    },
+    {
+      "name": "a11y-dialog",
+      "repo": "KittyGiraudel/a11y-dialog",
+      "link": "https://github.com/KittyGiraudel/a11y-dialog",
+      "author": "Kitty Giraudel",
+      "license": "MIT",
+      "license_file": "licenses/a11y-dialog.txt",
+      "used_for": "The Settings dialog and the Leave room dialog: focus moves in and back out, Escape closes, and the rest of the page is hidden from screen readers while it is open.",
+      "files": [
+        "vendor/a11y-dialog/a11y-dialog.esm.js (npm a11y-dialog 8.1.5)"
+      ],
+      "changes": "The published build bundles a package called focusable-selectors, which is not starred. That part was removed and the focus trap now uses tabbable instead. The file says so at the top.",
+      "notice": "Copyright (c) 2025 Kitty Giraudel. MIT License."
+    },
+    {
+      "name": "dart-bip340",
+      "repo": "nbd-wtf/dart-bip340",
+      "link": "https://github.com/nbd-wtf/dart-bip340",
+      "author": "fiatjaf",
+      "license": "MIT",
+      "license_file": "licenses/dart-bip340.txt",
+      "used_for": "Nostr relays only accept signed events. trystero normally signs them with @noble/secp256k1, which is not starred, so Tap Party signs with a JavaScript port of this repo's BIP-340 Schnorr code instead.",
+      "files": [
+        "vendor/bip340-schnorr/bip340-schnorr.mjs"
+      ],
+      "changes": "Ported from Dart to JavaScript. The curve maths that the Dart code takes from pointycastle is written from scratch. It passes the official BIP-340 signing test vectors.",
+      "notice": "Copyright 2021 fiatjaf. MIT License."
+    }
+  ],
+  "not_used": [
+    {
+      "repo": "hainguyents13/mechvibes",
+      "why": "Its sound packs come from many people and none of them states its own licence, so they are not safe to reuse. Every tone and earcon in Tap Party is made with WebAudio oscillators instead, with no sound files at all."
+    },
+    {
+      "repo": "paulmillr/noble-secp256k1",
+      "why": "trystero's Nostr strategy depends on it, but it is not starred, so it is replaced by the dart-bip340 port above."
+    },
+    {
+      "repo": "KittyGiraudel/focusable-selectors",
+      "why": "Bundled inside a11y-dialog's published build, but not starred, so it was swapped for tabbable."
+    }
+  ],
+  "testing_only": [
+    {
+      "repo": "dequelabs/axe-core",
+      "license": "MPL-2.0",
+      "why": "Ran an automated accessibility check during testing. It is not part of the site."
+    }
+  ]
+}
