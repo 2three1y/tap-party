@@ -30,7 +30,7 @@ openssl/experimental
 openssl/openssl
 cezheng/Fuzi
 2three1y/feditext
-2three1y/feditext-sim
+2three1y/feditextsim
 chunxiaoxx/nautilus-compass
 ChesterRa/cccc
 rs-ipfs/rust-ipfs
@@ -3452,11 +3452,11 @@ per-simmons/murmur-youtube
 facebookincubator/muse-gadget-sdk
 Adolanium/hermes-gadget-sdk
 varadTheDeveloper/blurit
-2three1y/carterpcs-fanclub
-2three1y/parkerburton-fanclub
-2three1y/tab-fanclub
-2three1y/carter-fanclub
-2three1y/insomnia-os
+2three1y/carterpcsfanclub
+2three1y/parkerburtonfanclub
+2three1y/tabfanclub
+2three1y/carterfanclub
+2three1y/insomniaos
 2three1y/alexclassic
 2three1y/codetranslator
 2three1y/chaoticmodel
@@ -3559,7 +3559,7 @@ foxanastudio/Infinity-For-Reddit-iOS
 2three1y/vibework
 xai-org/grok-1
 2three1y/memeprojects
-2three1y/reactor-toolbar
+2three1y/reactortoolbar
 paperclipai/paperclip
 jcsteh/osara
 AccessKit/accesskit
@@ -7862,7 +7862,7 @@ pubky/pubky-ai-bot
 pubky/pubky-beta
 keycloak/keycloak
 protocolbuffers/protobuf
-2three1y/yapper-site
+2three1y/yappersite
 2three1y/mysty-social-public
 MysteryNBS/yapper-public
 curl/curl

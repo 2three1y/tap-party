@@ -2,7 +2,7 @@
 
 Morse code chat with your friends, right in the browser. Open a room, share the link, and tap a big pad: a short tap is a dot, a long press is a dash. Friends hear your taps as tones, feel them as buzzes, and get the decoded words read out by their screen reader. There is a Learn mode for the letters and a Braille view.
 
-Live: https://2three1y.github.io/tap-party/
+Live: https://2three1y.github.io/tapparty/
 
 Built only from repos [2three1y](https://github.com/2three1y) has starred. See CREDITS below.
 
